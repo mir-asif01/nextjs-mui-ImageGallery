@@ -26,7 +26,7 @@ export default function ImageUpload() {
       tabIndex={-1}
       startIcon={<UploadCloudIcon />}
     >
-      Upload files
+      Upload Images
       <VisuallyHiddenInput
         type="file"
         onChange={(event) => console.log(event.target.files)}

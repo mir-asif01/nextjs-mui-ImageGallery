@@ -8,7 +8,7 @@ export default function Header() {
         <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>
           Pichouse
         </Typography>
-        <Link href={"/upload"} passHref>
+        <Link href={"/"} passHref>
           <Button color="inherit">Upload</Button>
         </Link>
         <Link href={"/gallery"} passHref>
