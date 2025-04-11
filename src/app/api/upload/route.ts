@@ -1,7 +1,6 @@
-import { rejects } from "assert";
+import supabaseClient from "@/utils/supabaseClient";
 import { v2 as cloudinary } from "cloudinary";
 import { NextRequest, NextResponse } from "next/server";
-import { resolve } from "path";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -30,8 +29,11 @@ export async function POST(req: NextRequest) {
             {
               resource_type: "image",
               folder: "nextjs-gallery",
+              categorization: "google_tagging",
+              auto_tagging: 0.6,
+              auto_tagging_limit: 5,
             },
-            (error, result) => {
+            async (error, result) => {
               if (error) reject(error);
               else resolve(result);
             }

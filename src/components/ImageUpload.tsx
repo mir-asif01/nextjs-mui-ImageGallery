@@ -12,6 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 import Image from "next/image";
+import supabaseClient from "@/utils/supabaseClient";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -59,7 +60,31 @@ export default function ImageUpload() {
       await fetch("/api/upload", {
         method: "POST",
         body: imageFormData,
-      }).then((res) => console.log(res));
+      }).then(async (response) => {
+        const res = await response.json();
+        if (res?.success) {
+          setImages([]);
+          setPreviews([]);
+          const images = res?.data;
+          images.forEach(async (img: any) => {
+            const { data, error } = await supabaseClient.from("images").insert([
+              {
+                public_id: img.public_id!,
+                url: img.url!,
+                tags: img.tags!,
+              },
+            ]);
+            if (error) {
+              console.log("Error while saving info to supbase", error);
+            } else {
+              console.log(data);
+            }
+
+            //show successfull toast
+          });
+        }
+        console.log(res);
+      });
     } catch (error) {
       console.log(error);
     }
@@ -79,9 +104,8 @@ export default function ImageUpload() {
       <Button
         component="label"
         role={undefined}
-        variant="contained"
+        variant="outlined"
         tabIndex={-1}
-        startIcon={<UploadCloudIcon />}
       >
         Select Images
         <input
@@ -92,7 +116,14 @@ export default function ImageUpload() {
           multiple
         />
       </Button>
-      <Button onClick={() => uploadToCloudinary()}>Upload</Button>
+      <Button
+        sx={{ mx: 2 }}
+        variant="contained"
+        startIcon={<UploadCloudIcon />}
+        onClick={() => uploadToCloudinary()}
+      >
+        Upload
+      </Button>
       <Typography variant="h5">selected images</Typography>
       {previews?.length > 0 ? (
         <List
