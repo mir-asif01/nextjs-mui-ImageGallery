@@ -26,7 +26,16 @@ export default function page() {
     fetchImages();
   }, []);
   return (
-    <Box sx={{}}>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+        p: 2,
+      }}
+    >
       <Images images={images!} />
     </Box>
   );

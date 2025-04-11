@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function Header() {
   return (
-    <AppBar position="static">
+    <AppBar position="static" component="header">
       <Toolbar>
         <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>
           Pichouse
