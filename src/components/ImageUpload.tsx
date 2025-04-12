@@ -14,6 +14,13 @@ import {
 import Image from "next/image";
 import supabaseClient from "@/utils/supabaseClient";
 
+interface IImage {
+  id: string;
+  public_id: string;
+  url: string;
+  tags: string[];
+}
+
 export default function ImageUpload() {
   const [images, setImages] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
@@ -61,7 +68,7 @@ export default function ImageUpload() {
           setImages([]);
           setPreviews([]);
           const images = res?.data;
-          images.forEach(async (img: any) => {
+          images.forEach(async (img: IImage) => {
             const { data, error } = await supabaseClient.from("images").insert([
               {
                 public_id: img.public_id!,

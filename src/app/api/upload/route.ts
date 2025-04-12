@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
       { success: true, message: "Successfully Uploaded", data: res },
       { status: 200 }
     );
-  } catch (error: any) {
-    throw new Error(error);
+  } catch (error) {
+    if (error) throw new Error("Error while uploading image");
   }
 }

@@ -10,7 +10,7 @@ interface IImage {
   url: string;
   tags: string[];
 }
-export default function page() {
+export default function Page() {
   const [images, setImages] = useState<IImage[] | null>([]);
   const ITEMS_PER_PAGE: number = 3;
   let disable_next = false;

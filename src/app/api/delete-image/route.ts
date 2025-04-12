@@ -47,6 +47,6 @@ export async function POST(req: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    throw new Error("Error while deleting images");
+    if (error) throw new Error("Error while deleting images");
   }
 }
