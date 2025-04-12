@@ -4,6 +4,7 @@ import { DeleteIcon, UploadCloudIcon } from "lucide-react";
 import { ChangeEvent, useState } from "react";
 import {
   Box,
+  CircularProgress,
   IconButton,
   List,
   ListItem,
@@ -16,6 +17,10 @@ import supabaseClient from "@/utils/supabaseClient";
 export default function ImageUpload() {
   const [images, setImages] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
+
+  const [loading, setLoading] = useState<boolean>(false);
+  const [uploadingResult, setUploadingResult] = useState<string>("");
+
   const imageFormData = new FormData();
 
   function handleImageInput(e: ChangeEvent<HTMLInputElement>) {
@@ -43,6 +48,7 @@ export default function ImageUpload() {
   images.forEach((img) => imageFormData.append("images", img));
 
   async function uploadToCloudinary() {
+    setLoading(true);
     try {
       await fetch("/api/upload", {
         method: "POST",
@@ -50,6 +56,8 @@ export default function ImageUpload() {
       }).then(async (response) => {
         const res = await response.json();
         if (res?.success) {
+          setLoading(false);
+          setUploadingResult("Successfully uploaded");
           setImages([]);
           setPreviews([]);
           const images = res?.data;
@@ -62,18 +70,17 @@ export default function ImageUpload() {
               },
             ]);
             if (error) {
-              console.log("Error while saving info to supbase", error);
+              console.log("Error while saving info to supabase", error);
             } else {
               console.log(data);
             }
-
-            //show successfull toast
           });
         }
         console.log(res);
       });
     } catch (error) {
       console.log(error);
+      setUploadingResult("Image upload failed, Try again!");
     }
   }
 
@@ -88,82 +95,105 @@ export default function ImageUpload() {
 
   return (
     <Box>
-      <Button
-        component="label"
-        role={undefined}
-        variant="outlined"
-        tabIndex={-1}
-      >
-        Select Images
-        <input
-          className="hidden"
-          type="file"
-          accept="image/*"
-          onChange={handleImageInput}
-          multiple
-        />
-      </Button>
-      <Button
-        sx={{ mx: 2 }}
-        variant="contained"
-        startIcon={<UploadCloudIcon />}
-        onClick={() => uploadToCloudinary()}
-      >
-        Upload
-      </Button>
-      <Typography variant="h5">selected images</Typography>
-      {previews?.length > 0 ? (
-        <List
+      {uploadingResult && (
+        <>
+          <Typography color="success" textAlign="center">
+            {uploadingResult}
+          </Typography>
+        </>
+      )}
+      {loading ? (
+        <Box
           sx={{
             display: "flex",
-            flexDirection: "row",
-            flexWrap: "wrap",
-            gap: 2,
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          {previews.map((previewUrl, index) => (
-            <ListItem
-              key={index}
+          <CircularProgress />
+          <Typography>Uploading</Typography>
+        </Box>
+      ) : (
+        <>
+          <Button
+            component="label"
+            role={undefined}
+            variant="outlined"
+            tabIndex={-1}
+          >
+            Select Images
+            <input
+              className="hidden"
+              type="file"
+              accept="image/*"
+              onChange={handleImageInput}
+              multiple
+            />
+          </Button>
+          <Button
+            sx={{ mx: 2 }}
+            variant="contained"
+            startIcon={<UploadCloudIcon />}
+            onClick={() => uploadToCloudinary()}
+          >
+            Upload
+          </Button>
+          <Typography variant="h5">selected images</Typography>
+          {previews?.length > 0 ? (
+            <List
               sx={{
-                width: 160,
-                height: 160,
-                border: "1px solid #ccc",
-                borderRadius: 1,
+                display: "flex",
+                flexDirection: "row",
+                flexWrap: "wrap",
+                gap: 2,
               }}
             >
-              <ListItemAvatar
-                sx={{ position: "relative", width: "100%", height: "100%" }}
-              >
-                <Image
-                  src={previewUrl}
-                  alt={`Preview ${index + 1}`}
-                  layout="fill"
-                  objectFit="cover"
-                  style={{ borderRadius: 1 }}
-                />
-                <IconButton
-                  edge="end"
-                  aria-label="delete"
-                  onClick={() => handleRemoveImage(index)}
+              {previews.map((previewUrl, index) => (
+                <ListItem
+                  key={index}
                   sx={{
-                    position: "absolute",
-                    top: 0,
-                    right: 0,
-                    backgroundColor: "rgba(0, 0, 0, 0.5)",
-                    color: "white",
-                    "&:hover": {
-                      backgroundColor: "rgba(0, 0, 0, 0.7)",
-                    },
+                    width: 160,
+                    height: 160,
+                    border: "1px solid #ccc",
+                    borderRadius: 1,
                   }}
                 >
-                  <DeleteIcon fontSize="small" />
-                </IconButton>
-              </ListItemAvatar>
-            </ListItem>
-          ))}
-        </List>
-      ) : (
-        <Typography variant="body2">No images selected yet.</Typography>
+                  <ListItemAvatar
+                    sx={{ position: "relative", width: "100%", height: "100%" }}
+                  >
+                    <Image
+                      src={previewUrl}
+                      alt={`Preview ${index + 1}`}
+                      layout="fill"
+                      objectFit="cover"
+                      style={{ borderRadius: 1 }}
+                    />
+                    <IconButton
+                      edge="end"
+                      aria-label="delete"
+                      onClick={() => handleRemoveImage(index)}
+                      sx={{
+                        position: "absolute",
+                        top: 0,
+                        right: 0,
+                        backgroundColor: "rgba(0, 0, 0, 0.5)",
+                        color: "white",
+                        "&:hover": {
+                          backgroundColor: "rgba(0, 0, 0, 0.7)",
+                        },
+                      }}
+                    >
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </ListItemAvatar>
+                </ListItem>
+              ))}
+            </List>
+          ) : (
+            <Typography variant="body2">No images selected yet.</Typography>
+          )}
+        </>
       )}
     </Box>
   );

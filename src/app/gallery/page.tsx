@@ -13,6 +13,11 @@ interface IImage {
 export default function page() {
   const [images, setImages] = useState<IImage[] | null>([]);
   const ITEMS_PER_PAGE: number = 3;
+  let disable_next = false;
+  if (images?.length == 0) {
+    disable_next = true;
+  }
+
   const [currentPage, setCurrentPage] = useState<number>(1);
   useEffect(() => {
     async function fetchImages() {
@@ -60,9 +65,13 @@ export default function page() {
         </Button>
         <Button sx={{ p: "2px", borderRadius: "50%" }}>{currentPage}</Button>
         <Button
+          disabled={disable_next}
           variant="contained"
           color="primary"
-          onClick={() => setCurrentPage((prev) => prev + 1)}
+          onClick={() => {
+            if (disable_next) return;
+            else setCurrentPage((prev) => prev + 1);
+          }}
         >
           Next
         </Button>
