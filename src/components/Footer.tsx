@@ -1,12 +1,5 @@
 "use client";
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Link,
-  Box,
-  IconButton,
-} from "@mui/material";
+import { AppBar, Toolbar, Typography, Box, IconButton } from "@mui/material";
 import { Github, Mail } from "lucide-react";
 
 const Footer = () => {

@@ -35,20 +35,25 @@ const Images: React.FC<ImagesComponentProps> = ({ images }) => {
     id: string;
     public_id: string;
   } | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [deletingResult, setDeletingResult] = useState<string>("");
 
   const handleOpenConfirmationModal = (id: string, public_id: string) => {
     setImageToDelete({ id, public_id });
     setOpenDeleteConfirmModal(true);
+    setDeletingResult("");
   };
 
   const handleClose = () => {
     setImageToDelete(null);
     setOpenDeleteConfirmModal(false);
+    setDeletingResult("");
   };
   // console.log(confirmDelete);
 
   //image delete function
   const handleDelete = async () => {
+    setLoading(true);
     if (imageToDelete != null) {
       try {
         const res = await fetch("/api/delete-image", {
@@ -63,10 +68,15 @@ const Images: React.FC<ImagesComponentProps> = ({ images }) => {
         });
         const response = await res.json();
         if (response?.success) {
-          handleClose();
+          setDeletingResult("Successfully Deleted");
+          setLoading(false);
+          setTimeout(() => {
+            handleClose();
+          }, 3000);
         }
         console.log(response);
       } catch (error) {
+        setDeletingResult("Failed to delete, try again!");
         console.log(error);
       }
     }
@@ -86,6 +96,8 @@ const Images: React.FC<ImagesComponentProps> = ({ images }) => {
           openDeleteConfirmModal={openDeleteConfirmModal}
           handleDelete={handleDelete}
           handleClose={handleClose}
+          loading={loading}
+          deletingResult={deletingResult}
         />
       )}
       {images?.map((img) => (
