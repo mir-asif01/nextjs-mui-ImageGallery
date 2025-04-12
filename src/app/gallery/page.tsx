@@ -11,7 +11,7 @@ interface IImage {
   tags: string[];
 }
 export default function page() {
-  const [images, setImages] = useState<IImage[] | null>(null);
+  const [images, setImages] = useState<IImage[] | null>([]);
   useEffect(() => {
     async function fetchImages() {
       try {
@@ -32,7 +32,6 @@ export default function page() {
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        height: "100vh",
         p: 2,
       }}
     >

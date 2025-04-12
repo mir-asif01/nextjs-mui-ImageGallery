@@ -1,15 +1,9 @@
 "use client";
-import {
-  Button,
-  Card,
-  CardActions,
-  CardMedia,
-  Grid,
-  IconButton,
-} from "@mui/material";
+import { Button, Card, CardActions, CardMedia, Grid } from "@mui/material";
 import { DeleteIcon, EyeIcon } from "lucide-react";
 import { useState } from "react";
 import ImagePreviewModal from "./ui/ImagePreviewModal";
+import DeleteConfirmationModal from "./ui/ConfirmDeleteModal";
 
 interface IImage {
   id: string;
@@ -18,7 +12,11 @@ interface IImage {
   tags: string[];
 }
 
-const Images = ({ images }: { images: IImage[] }) => {
+interface ImagesComponentProps {
+  images: IImage[];
+}
+
+const Images: React.FC<ImagesComponentProps> = ({ images }) => {
   const [selectedImage, setSelectedImage] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -32,7 +30,47 @@ const Images = ({ images }: { images: IImage[] }) => {
     setSelectedImage("");
   };
 
-  const handleDelete = () => {};
+  const [openDeleteConfirmModal, setOpenDeleteConfirmModal] = useState(false);
+  const [imageToDelete, setImageToDelete] = useState<{
+    id: string;
+    public_id: string;
+  } | null>(null);
+
+  const handleOpenConfirmationModal = (id: string, public_id: string) => {
+    setImageToDelete({ id, public_id });
+    setOpenDeleteConfirmModal(true);
+  };
+
+  const handleClose = () => {
+    setImageToDelete(null);
+    setOpenDeleteConfirmModal(false);
+  };
+  // console.log(confirmDelete);
+
+  //image delete function
+  const handleDelete = async () => {
+    if (imageToDelete != null) {
+      try {
+        const res = await fetch("/api/delete-image", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id: imageToDelete.id,
+            public_id: imageToDelete.public_id,
+          }),
+        });
+        const response = await res.json();
+        if (response?.success) {
+          handleClose();
+        }
+        console.log(response);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
 
   return (
     <Grid container spacing={2}>
@@ -43,12 +81,19 @@ const Images = ({ images }: { images: IImage[] }) => {
           onClose={handleCloseModal}
         />
       )}
+      {openDeleteConfirmModal && (
+        <DeleteConfirmationModal
+          openDeleteConfirmModal={openDeleteConfirmModal}
+          handleDelete={handleDelete}
+          handleClose={handleClose}
+        />
+      )}
       {images?.map((img) => (
-        <Grid key={img?.id} size={4}>
+        <Grid size={{ xs: 12, md: 6, lg: 4 }} key={img?.id} sx={{}}>
           <Card sx={{}}>
             <CardMedia
               component="img"
-              height="200"
+              height="100"
               image={img.url}
               // alt={img.altText || "Image"}
             />
@@ -57,14 +102,21 @@ const Images = ({ images }: { images: IImage[] }) => {
                 justifyContent: "space-between",
               }}
             >
-              <IconButton aria-label="view" onClick={() => {}}>
-                <EyeIcon onClick={() => handleImageSelect(img?.url)} />
-              </IconButton>
+              <Button
+                size="small"
+                color="primary"
+                startIcon={<EyeIcon />}
+                onClick={() => handleImageSelect(img?.url)}
+              >
+                View
+              </Button>
               <Button
                 size="small"
                 color="error"
                 startIcon={<DeleteIcon />}
-                onClick={() => handleDelete()}
+                onClick={() =>
+                  handleOpenConfirmationModal(img?.id, img?.public_id)
+                }
               >
                 Delete
               </Button>
