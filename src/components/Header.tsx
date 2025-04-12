@@ -5,7 +5,11 @@ export default function Header() {
   return (
     <AppBar position="static" component="header">
       <Toolbar>
-        <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>
+        <Typography
+          fontSize={{ xs: "20px", md: "30px", lg: "40px" }}
+          component="div"
+          sx={{ flexGrow: 1 }}
+        >
           Pichouse
         </Typography>
         <Link href={"/"} passHref>

@@ -18,7 +18,7 @@ const ImagePreviewModal: React.FC<ImagePreviewModalProps> = ({
   onClose,
 }) => {
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth sx={{ p: 3 }}>
+    <Dialog open={open} onClose={onClose} fullScreen fullWidth sx={{ p: 3 }}>
       <DialogContent
         sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
       >

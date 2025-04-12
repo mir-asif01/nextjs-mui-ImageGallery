@@ -7,24 +7,16 @@ import {
   Box,
   IconButton,
 } from "@mui/material";
-import { Github, Linkedin, Mail } from "lucide-react";
+import { Github, Mail } from "lucide-react";
 
 const Footer = () => {
   return (
-    <AppBar
-      component="footer"
-      position="static"
-      sx={{
-        backgroundColor: (theme) => theme.palette.primary.main,
-        color: (theme) => theme.palette.primary.contrastText,
-        py: 2, // Padding top and bottom (Material UI spacing unit * 2)
-      }}
-    >
+    <AppBar component="footer" position="static" sx={{ p: 2 }}>
       <Toolbar sx={{ justifyContent: "space-between" }}>
-        <Typography variant="h4">
+        <Typography variant="h5">
           Developed by © Mir Kamrul Ahsan Asif
         </Typography>
-        <Box>
+        <Box sx={{ display: "flex", flexDirection: "row" }}>
           <IconButton
             color="inherit"
             aria-label="GitHub"

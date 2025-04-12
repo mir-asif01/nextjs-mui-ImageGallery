@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { StyledEngineProvider } from "@mui/material";
+import { Box, StyledEngineProvider } from "@mui/material";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -28,15 +28,30 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-[100vh]`}
       >
-        <StyledEngineProvider>
-          <header>
-            <Header />
-          </header>
+        {/* <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            minHeight: "100vh",
+          }}
+        > */}
+        <Box component="header">
+          <Header />
+        </Box>
+        <Box
+          component="main"
+          sx={{
+            flexGrow: 1,
+          }}
+        >
           {children}
+        </Box>
+        <Box component="footer">
           <Footer />
-        </StyledEngineProvider>
+        </Box>
+        {/* </Box> */}
       </body>
     </html>
   );
